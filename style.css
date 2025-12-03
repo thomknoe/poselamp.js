@@ -43,7 +43,6 @@
     margin: 0 0 12px;
     font-size: 28px;
     font-weight: 600;
-<<<<<<< HEAD
     letter-spacing: -0.5px;
     color: #1d1d1f;
   }
@@ -78,37 +77,6 @@
   
   .status-dot {
     display: inline-block;
-=======
-    color: #222;
-}
-
-.container {
-    display: flex;
-    justify-content: center;
-    gap: 24px;
-    margin-top: 20px;
-    align-items: flex-start;
-}
-
-.panel {
-    width: 300px;
-    background: white;
-    border-radius: 14px;
-    padding: 18px;
-    border: 1px solid #e6e6e6;
-    box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.04);
-}
-
-.panel h2 {
-    margin-top: 0;
-    text-align: center;
-    font-size: 20px;
-    font-weight: 500;
-    color: #222;
-}
-
-.status-light {
->>>>>>> refs/remotes/origin/main
     width: 10px;
     height: 10px;
     border-radius: 999px;
@@ -164,7 +132,6 @@
     color: #fff;
     border-color: #007AFF;
     font-weight: 500;
-<<<<<<< HEAD
   }
   
   .next-btn:hover:not(:disabled) {
@@ -223,24 +190,6 @@
   ========================================================= */
   
   .button-group {
-=======
-    transition: background 0.5s ease;
-}
-
-/* Posture class styling */
-.good {
-    background: #d9f8e8;
-    color: #0a7a3e;
-}
-
-.bad {
-    background: #ffe7e5;
-    color: #a5231e;
-}
-
-#videoContainer {
-    margin-top: 0;
->>>>>>> refs/remotes/origin/main
     display: flex;
     gap: 12px;
     margin: 16px 0;
@@ -584,7 +533,6 @@
     gap: 8px;
   }
 
-<<<<<<< HEAD
   .stat-item-center {
     flex: 1;
     max-width: 200px;
@@ -756,65 +704,3 @@
       flex-direction: column;
     }
   }
-=======
-#videoWrapper {
-    flex: 1 1 420px;
-    display: flex;
-    justify-content: center;
-}
-
-
-canvas {
-    border-radius: 10px;
-    border: 1px solid #e6e6e6;
-}
-
-.panel-subtitle {
-    margin: 4px 0 12px;
-    font-size: 13px;
-    color: #777;
-    text-align: center;
-}
-
-.mode-label {
-    font-size: 14px;
-    font-weight: 500;
-    margin-bottom: 6px;
-    color: #333;
-}
-
-.gradient-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 4px;
-}
-
-.grad-btn {
-    flex: 1 0 22%;
-    aspect-ratio: 2.2 / 1;
-    border-radius: 999px;
-    border: none;
-    cursor: pointer;
-    padding: 0;
-    outline: none;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.12);
-    transition: transform 0.08s ease, box-shadow 0.08s ease, opacity 0.1s;
-    opacity: 0.9;
-}
-
-.grad-btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 3px 8px rgba(0,0,0,0.16);
-    opacity: 1;
-}
-
-.grad-btn:active {
-    transform: translateY(0);
-    box-shadow: 0 1px 4px rgba(0,0,0,0.18);
-}
-
-.grad-btn.selected {
-    outline: 2px solid #333;
-}
->>>>>>> refs/remotes/origin/main

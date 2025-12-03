@@ -26,7 +26,6 @@
                 may proceed to calibration.
             </p>
 
-<<<<<<< HEAD
             <div class="status-block">
                 <div>
                     <span id="mqttDot" class="status-dot disconnected"></span>
@@ -325,89 +324,6 @@
                 </div>
             </div>
         </div>
-=======
-    <!-- ROW 1: connection + posture -->
-    <div class="container">
-    <!-- CONNECTION PANEL -->
-    <div class="panel">
-        <h2>Connection</h2>
-        <div>
-        <span class="status-light" id="mqttLight" style="background:#c33;"></span>
-        <b>MQTT:</b> <span id="mqttStatus">Disconnected</span>
-        </div>
-        <br>
-        <div><b>Device:</b> <span id="deviceIP">None</span></div>
-
-        <button id="connectMQTT">Connect</button>
-        <button id="pingDevice">Ping Device</button>
-    </div>
-
-    <!-- POSTURE PANEL -->
-    <div class="panel">
-        <h2>Posture</h2>
-        <div id="postureBox" class="good">Waiting for data...</div>
-
-        <br>
-        <div><b>Nose Y:</b> <span id="noseVal">—</span></div>
-        <div><b>Shoulder Y:</b> <span id="shoulderVal">—</span></div>
-        <div><b>Delta:</b> <span id="deltaVal">—</span></div>
-    </div>
-    </div>
-
-    <!-- ROW 2: video + colors -->
-    <div class="container">
-    <div id="videoWrapper">
-        <div id="videoContainer"></div>
-    </div>
-
-    <!-- COLOR PRESETS PANEL -->
-    <div class="panel">
-        <h2>Lantern Colors</h2>
-
-        <div class="mode-label">Slouching</div>
-        <div class="gradient-row">
-        <button class="grad-btn" data-mode="MODE_1" data-index="0"
-            style="background: linear-gradient(90deg,#FF0078,#00B4FF);"></button>
-        <button class="grad-btn" data-mode="MODE_1" data-index="1"
-            style="background: linear-gradient(90deg,#FF8000,#FFE600);"></button>
-        <button class="grad-btn" data-mode="MODE_1" data-index="2"
-            style="background: linear-gradient(90deg,#AA00FF,#FF00B4);"></button>
-        <button class="grad-btn" data-mode="MODE_1" data-index="3"
-            style="background: linear-gradient(90deg,#0050FF,#00FFFF);"></button>
-        <button class="grad-btn" data-mode="MODE_1" data-index="4"
-            style="background: linear-gradient(90deg,#FF003C,#FF9600);"></button>
-        <button class="grad-btn" data-mode="MODE_1" data-index="5"
-            style="background: linear-gradient(90deg,#00C878,#00FF00);"></button>
-        <button class="grad-btn" data-mode="MODE_1" data-index="6"
-            style="background: linear-gradient(90deg,#00FFD0,#AA00FF);"></button>
-        <button class="grad-btn" data-mode="MODE_1" data-index="7"
-            style="background: linear-gradient(90deg,#FF0078,#FFFFFF);"></button>
-        </div>
-
-        <br>
-
-        <div class="mode-label">Upright</div>
-        <div class="gradient-row">
-        <!-- solid-ish previews but still gradient pills -->
-        <button class="grad-btn" data-mode="MODE_5" data-index="0"
-            style="background: linear-gradient(90deg,#00FF8C,#00FF8C);"></button>
-        <button class="grad-btn" data-mode="MODE_5" data-index="1"
-            style="background: linear-gradient(90deg,#78FF50,#78FF50);"></button>
-        <button class="grad-btn" data-mode="MODE_5" data-index="2"
-            style="background: linear-gradient(90deg,#00C8FF,#00C8FF);"></button>
-        <button class="grad-btn" data-mode="MODE_5" data-index="3"
-            style="background: linear-gradient(90deg,#50AAFF,#50AAFF);"></button>
-        <button class="grad-btn" data-mode="MODE_5" data-index="4"
-            style="background: linear-gradient(90deg,#C8FFFF,#C8FFFF);"></button>
-        <button class="grad-btn" data-mode="MODE_5" data-index="5"
-            style="background: linear-gradient(90deg,#FFDCAF,#FFDCAf);"></button>
-        <button class="grad-btn" data-mode="MODE_5" data-index="6"
-            style="background: linear-gradient(90deg,#BEB4FF,#BEB4FF);"></button>
-        <button class="grad-btn" data-mode="MODE_5" data-index="7"
-            style="background: linear-gradient(90deg,#FFB4DC,#FFB4DC);"></button>
-        </div>
-    </div>
->>>>>>> refs/remotes/origin/main
     </div>
 
     <script src="script.js"></script>
