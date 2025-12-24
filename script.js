@@ -1,7 +1,3 @@
-/* =========================================================
-   GLOBAL STATE
-========================================================= */
-
 let mqttClient = null;
 let mqttConnected = false;
 let deviceOnline = false;
@@ -10,9 +6,9 @@ let uprightDelta = null;
 let slouchDelta = null;
 let lastDelta = null;
 
-let selectedMode = "NORMAL"; // Default brightness
-let selectedUprightGradient = 5; // Default to Dawn
-let selectedSlouchGradient = 0; // Default first gradient
+let selectedMode = "NORMAL";
+let selectedUprightGradient = 5;
+let selectedSlouchGradient = 0;
 
 let sessionActive = false;
 let sessionStartTime = null;
@@ -22,24 +18,17 @@ let lastPostureCode = null;
 let lastPostureCandidate = null;
 let postureStableFrames = 0;
 
-// Pose variables
 let video,
   bodyPose,
   connections = [],
   poses = [];
 let canvasObj = null;
 
-/* TRENDLINE DATA */
 let trendData = [];
-let lastTrendSampleTime = 0; // ms timestamp for sampling
+let lastTrendSampleTime = 0;
 
-/* SPECIAL MODES TIMERS */
 let mobilityTimeout = null;
 let partyTimeout = null;
-
-/* =========================================================
-   MQTT HELPERS
-========================================================= */
 
 function updateMQTTDisplay(connected) {
   const dot = document.getElementById("mqttDot");
@@ -87,10 +76,6 @@ function connectMQTT() {
   });
 }
 
-/* =========================================================
-   SCREEN NAVIGATION & CANVAS RE-PARENTING
-========================================================= */
-
 function showScreen(id) {
   document
     .querySelectorAll(".screen")
@@ -110,10 +95,6 @@ function showScreen(id) {
   }
 }
 
-/* =========================================================
-   CALIBRATION HELPERS
-========================================================= */
-
 function updateCalUI() {
   if (uprightDelta !== null) {
     document.getElementById("uprightDeltaVal").innerText =
@@ -130,11 +111,9 @@ function updateCalUI() {
 }
 
 function enableFinishIfReady() {
-  // Gradients always have defaults; mode is optional
   document.getElementById("finishSetup").disabled = false;
 }
 
-// Gradient color definitions (matching ESP-32)
 const GRADIENT_COLORS = {
   UPRIGHT: [
     { a: "rgb(80, 160, 100)", b: "rgb(140, 220, 160)", name: "Sage" },
@@ -213,10 +192,6 @@ function syncGradientSelections() {
   updateFooterSwatches();
 }
 
-/* =========================================================
-   SESSION TIMER
-========================================================= */
-
 function updateSessionDuration() {
   const durationEl = document.getElementById("sessionDuration");
   if (!sessionActive || !sessionStartTime) {
@@ -230,10 +205,6 @@ function updateSessionDuration() {
     seconds
   ).padStart(2, "0")}`;
 }
-
-/* =========================================================
-   POSTURE SCORE
-========================================================= */
 
 function updatePostureScore(code) {
   if (!sessionActive) return;
@@ -257,12 +228,6 @@ function updatePostureScore(code) {
   }
 }
 
-/* =========================================================
-   TRENDLINE GRAPH (FULL SESSION, COMPRESSED)
-========================================================= */
-
-/* --- Trendline with real-time smoothing & dynamic density --- */
-
 let smoothedDelta = null;
 
 function addTrendPoint(delta) {
@@ -270,11 +235,9 @@ function addTrendPoint(delta) {
 
   const now = Date.now();
 
-  // Real-time sampling (20 Hz pace)
   if (now - lastTrendSampleTime < 50) return;
   lastTrendSampleTime = now;
 
-  // Exponential smoothing
   if (smoothedDelta === null) smoothedDelta = delta;
   smoothedDelta = smoothedDelta * 0.85 + delta * 0.15;
 
@@ -290,7 +253,6 @@ function drawTrendline() {
 
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   if (trendData.length < 2) {
-    // Draw empty state
     ctx.fillStyle = "#8e8e93";
     ctx.font = "13px -apple-system, BlinkMacSystemFont, sans-serif";
     ctx.textAlign = "center";
@@ -307,11 +269,9 @@ function drawTrendline() {
   const range = maxDelta - minDelta || 1;
   const padding = 20;
 
-  // Draw grid lines and tick marks
   ctx.strokeStyle = "#e5e5ea";
   ctx.lineWidth = 0.5;
 
-  // Horizontal grid lines (5 lines) with tick marks
   for (let i = 0; i <= 4; i++) {
     const y = padding + (i * (canvas.height - padding * 2)) / 4;
     ctx.beginPath();
@@ -319,13 +279,11 @@ function drawTrendline() {
     ctx.lineTo(canvas.width - padding, y);
     ctx.stroke();
 
-    // Y-axis tick marks
     ctx.beginPath();
     ctx.moveTo(padding - 4, y);
     ctx.lineTo(padding, y);
     ctx.stroke();
 
-    // Y-axis labels
     const value = maxDelta - (i * range) / 4;
     ctx.fillStyle = "#8e8e93";
     ctx.font = "10px -apple-system, BlinkMacSystemFont, sans-serif";
@@ -333,7 +291,6 @@ function drawTrendline() {
     ctx.fillText(value.toFixed(0), padding - 8, y + 3);
   }
 
-  // Vertical grid lines (time markers) with tick marks
   const timeMarkers = 6;
   for (let i = 0; i <= timeMarkers; i++) {
     const x = padding + (i * (canvas.width - padding * 2)) / timeMarkers;
@@ -343,13 +300,11 @@ function drawTrendline() {
     ctx.stroke();
   }
 
-  // X-axis label
   ctx.fillStyle = "#8e8e93";
   ctx.font = "10px -apple-system, BlinkMacSystemFont, sans-serif";
   ctx.textAlign = "center";
   ctx.fillText("Time", canvas.width / 2, canvas.height - 4);
 
-  // Y-axis label
   ctx.save();
   ctx.translate(12, canvas.height / 2);
   ctx.rotate(-Math.PI / 2);
@@ -357,7 +312,6 @@ function drawTrendline() {
   ctx.fillText("Delta (px)", 0, 0);
   ctx.restore();
 
-  // Draw zero line (threshold indicator)
   const zeroY =
     canvas.height -
     padding -
@@ -371,7 +325,6 @@ function drawTrendline() {
   ctx.stroke();
   ctx.setLineDash([]);
 
-  // Draw trendline
   const step = (canvas.width - padding * 2) / Math.max(trendData.length - 1, 1);
 
   ctx.beginPath();
@@ -393,7 +346,6 @@ function drawTrendline() {
 
   ctx.stroke();
 
-  // Draw area under curve
   if (trendData.length > 0) {
     const firstY =
       canvas.height -
@@ -425,10 +377,6 @@ function drawTrendline() {
     ctx.fill();
   }
 }
-
-/* =========================================================
-   POSTURE OUTPUT + MQTT
-========================================================= */
 
 function applyPosture(code) {
   const box = document.getElementById("postureBox");
@@ -469,10 +417,6 @@ function applyPosture(code) {
   }
 }
 
-/* =========================================================
-   POSTURE CALCULATION
-========================================================= */
-
 function computePosture(pose) {
   if (!pose || !pose.keypoints) return;
 
@@ -506,10 +450,6 @@ function computePosture(pose) {
 
   applyPosture(code);
 }
-
-/* =========================================================
-   ML5 + P5 SETUP (landmarks only)
-========================================================= */
 
 function preload() {
   bodyPose = ml5.bodyPose();
@@ -561,12 +501,7 @@ function draw() {
   computePosture(pose);
 }
 
-/* =========================================================
-   SPECIAL MODE HELPERS (Mobility & Party)
-========================================================= */
-
 function restorePostureMode() {
-  // After special mode, return to posture-based mode
   if (lastPostureCode === "S") {
     safePublish("esp32/mode", "MODE_SLOUCH");
   } else {
@@ -574,18 +509,12 @@ function restorePostureMode() {
   }
 }
 
-/* =========================================================
-   EVENT LISTENERS
-========================================================= */
-
 document.addEventListener("DOMContentLoaded", () => {
-  /* STEP 1 */
   document.getElementById("connectMQTT").onclick = connectMQTT;
   document.getElementById("pingDevice").onclick = () =>
     safePublish("esp32/ping", "PING");
   document.getElementById("toStep2").onclick = () => showScreen("screen2");
 
-  /* STEP 2 */
   const uprightBtn = document.getElementById("setUpright");
   const slouchBtn = document.getElementById("setSlouch");
 
@@ -606,7 +535,6 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("backTo1").onclick = () => showScreen("screen1");
   document.getElementById("toStep3").onclick = () => showScreen("screen3");
 
-  /* STEP 3 */
   document.querySelectorAll(".modeBtn").forEach((btn) => {
     btn.onclick = () => {
       selectedMode = btn.dataset.mode;
@@ -619,11 +547,9 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   });
 
-  // Default mode selection
   const defaultModeBtn = document.querySelector('.modeBtn[data-mode="NORMAL"]');
   if (defaultModeBtn) defaultModeBtn.classList.add("selected");
 
-  // Gradient selection in step 3
   document.querySelectorAll(".gradient-option").forEach((option) => {
     option.onclick = () => {
       const posture = option.dataset.posture;
@@ -633,7 +559,6 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   });
 
-  // Sync default gradient selections
   syncGradientSelections();
 
   document.getElementById("backTo2").onclick = () => showScreen("screen2");
@@ -644,7 +569,6 @@ document.addEventListener("DOMContentLoaded", () => {
     showScreen("dashboard");
   };
 
-  /* DASHBOARD */
   const sessionToggle = document.getElementById("sessionToggle");
 
   sessionToggle.onclick = () => {
@@ -658,7 +582,6 @@ document.addEventListener("DOMContentLoaded", () => {
       sessionStartTime = Date.now();
       postureScore = 100;
 
-      // Reset trendline for new session
       trendData = [];
       lastTrendSampleTime = 0;
       drawTrendline();
@@ -671,7 +594,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
       sessionStartTime = null;
 
-      // Clear trend for ended session
       trendData = [];
       lastTrendSampleTime = 0;
       drawTrendline();
@@ -680,7 +602,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // Dashboard gradient selection (mini tiles in modal)
   document.querySelectorAll(".gradient-mini").forEach((mini) => {
     mini.onclick = () => {
       const posture = mini.dataset.posture;
@@ -689,7 +610,6 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   });
 
-  // Modal functionality
   const colorModal = document.getElementById("colorModal");
   const selectColorsBtn = document.getElementById("selectColorsBtn");
   const closeModal = document.getElementById("closeModal");
@@ -709,7 +629,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   };
 
-  // Modal gradient selection
   document
     .querySelectorAll(
       "#modalUprightGradients .gradient-mini, #modalSlouchGradients .gradient-mini"
@@ -722,13 +641,9 @@ document.addEventListener("DOMContentLoaded", () => {
       };
     });
 
-  /* Mobility Drill and Party Mode (10-second special modes) */
-
   document.getElementById("mobilityBtn").onclick = () => {
-    // Cancel any previous timers
     if (mobilityTimeout) clearTimeout(mobilityTimeout);
 
-    // Trigger 10s mobility mode (ESP handles flashing)
     safePublish("esp32/mode", "MODE_MOBILITY");
 
     mobilityTimeout = setTimeout(() => {
@@ -739,7 +654,6 @@ document.addEventListener("DOMContentLoaded", () => {
   document.getElementById("partyBtn").onclick = () => {
     if (partyTimeout) clearTimeout(partyTimeout);
 
-    // Trigger 10s party mode (ESP handles rainbow gradient)
     safePublish("esp32/mode", "MODE_PARTY");
 
     partyTimeout = setTimeout(() => {
@@ -747,9 +661,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 10000);
   };
 
-  // Update session timer every second
   setInterval(updateSessionDuration, 1000);
 
-  // Initialize footer swatches on page load
   updateFooterSwatches();
 });

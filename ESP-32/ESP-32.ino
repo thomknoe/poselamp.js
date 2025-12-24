@@ -15,82 +15,61 @@ const char *mqtt_server = "test.mosquitto.org";
 WiFiClient espClient;
 PubSubClient client(espClient);
 
-// 6 Upright gradients (Apple-inspired finishes) - darker and more visible
-// Gradient 0: Sage - soft green to mint
 uint32_t UPRIGHT_0_A = strip.Color(80, 160, 100);
 uint32_t UPRIGHT_0_B = strip.Color(140, 220, 160);
 
-// Gradient 1: Sky - light blue to cyan
 uint32_t UPRIGHT_1_A = strip.Color(60, 160, 200);
 uint32_t UPRIGHT_1_B = strip.Color(40, 200, 240);
 
-// Gradient 2: Lavender - soft purple to lilac
 uint32_t UPRIGHT_2_A = strip.Color(160, 140, 200);
 uint32_t UPRIGHT_2_B = strip.Color(200, 160, 220);
 
-// Gradient 3: Pearl - soft white to light gray-blue
 uint32_t UPRIGHT_3_A = strip.Color(180, 200, 220);
 uint32_t UPRIGHT_3_B = strip.Color(160, 190, 210);
 
-// Gradient 4: Mint - fresh mint to seafoam
 uint32_t UPRIGHT_4_A = strip.Color(100, 200, 160);
 uint32_t UPRIGHT_4_B = strip.Color(140, 240, 190);
 
-// Gradient 5: Dawn - soft peach to cream
 uint32_t UPRIGHT_5_A = strip.Color(240, 180, 140);
 uint32_t UPRIGHT_5_B = strip.Color(250, 210, 180);
 
-// 6 Slouch gradients (Apple-inspired warm finishes) - darker and more visible
-// Gradient 0: Ember - warm orange to red
 uint32_t SLOUCH_0_A = strip.Color(255, 100, 40);
 uint32_t SLOUCH_0_B = strip.Color(255, 50, 70);
 
-// Gradient 1: Sunset - coral to pink
 uint32_t SLOUCH_1_A = strip.Color(255, 120, 80);
 uint32_t SLOUCH_1_B = strip.Color(255, 70, 120);
 
-// Gradient 2: Amber - golden to orange
 uint32_t SLOUCH_2_A = strip.Color(255, 150, 30);
 uint32_t SLOUCH_2_B = strip.Color(255, 110, 50);
 
-// Gradient 3: Rose - rose to pink
 uint32_t SLOUCH_3_A = strip.Color(255, 90, 110);
 uint32_t SLOUCH_3_B = strip.Color(255, 120, 150);
 
-// Gradient 4: Coral - coral to peach
 uint32_t SLOUCH_4_A = strip.Color(255, 100, 70);
 uint32_t SLOUCH_4_B = strip.Color(255, 150, 120);
 
-// Gradient 5: Flame - red-orange to yellow-orange
 uint32_t SLOUCH_5_A = strip.Color(255, 70, 50);
 uint32_t SLOUCH_5_B = strip.Color(255, 130, 70);
 
-// Current selected gradients (defaults)
-uint8_t currentUprightGradient = 5; // Default to Dawn
+uint8_t currentUprightGradient = 5;
 uint8_t currentSlouchGradient = 0;
 
-// Track current posture state
 bool isCurrentlyUpright = true;
 
-// Current active gradient endpoints for posture mode
 uint32_t fromA, fromB;
 uint32_t toA, toB;
 
 float transitionProgress = 1.0;
 
-// Brightness control (0-255, default full brightness)
 uint8_t currentBrightness = 255;
 
-// Lantern modes
 enum LanternMode { MODE_POSTURE, MODE_MOBILITY, MODE_PARTY };
 
 LanternMode currentMode = MODE_POSTURE;
 unsigned long modeStartMillis = 0;
 
-// Mobility fade state
-float mobilityFade = 0.0; // 0.0 = fully off, 1.0 = fully on
-const float FADE_SPEED =
-    0.003; // Speed of fade in/out (adjust for faster/slower)
+float mobilityFade = 0.0;
+const float FADE_SPEED = 0.003;
 
 void setup_wifi() {
   WiFi.mode(WIFI_STA);
@@ -112,7 +91,6 @@ void startTransition(uint32_t newA, uint32_t newB) {
 }
 
 void setGradientInstant(uint32_t newA, uint32_t newB) {
-  // Instant change - no transition
   fromA = newA;
   fromB = newB;
   toA = newA;
@@ -141,7 +119,6 @@ uint32_t applyBrightness(uint32_t color, uint8_t brightness) {
   return strip.Color(r, g, b);
 }
 
-// Map LED index to x position in snaking 5x5 grid
 int getXPosition(int ledIndex) {
   int row = ledIndex / GRID_WIDTH;
   int colInRow = ledIndex % GRID_WIDTH;
@@ -242,7 +219,6 @@ void getGradientColors(uint8_t gradientIndex, bool isUpright, uint32_t *outA,
   }
 }
 
-// HSV → RGB helper for Party Mode
 uint32_t hsvToRgb(float h, float s, float v) {
   float c = v * s;
   float x = c * (1.0f - fabsf(fmodf(h / 60.0f, 2.0f) - 1.0f));
@@ -281,16 +257,12 @@ uint32_t hsvToRgb(float h, float s, float v) {
   return strip.Color(r, g, b);
 }
 
-// MOBILITY: flash current gradient on/off for 10s
 void renderMobility() {
-  // Smooth fade in/out using sine wave for gradual transitions
   unsigned long now = millis();
   float time = (float)now * FADE_SPEED;
 
-  // Use sine wave: (sin(time) + 1) / 2 gives smooth 0.0 to 1.0 oscillation
   mobilityFade = (sin(time) + 1.0) * 0.5;
 
-  // Get current gradient colors
   uint32_t a, b;
   if (isCurrentlyUpright) {
     getGradientColors(currentUprightGradient, true, &a, &b);
@@ -298,13 +270,11 @@ void renderMobility() {
     getGradientColors(currentSlouchGradient, false, &a, &b);
   }
 
-  // Apply fade to gradient
   for (int i = 0; i < NUM_LEDS; i++) {
     int xPos = getXPosition(i);
     float gradientPos = (float)xPos / (float)(GRID_WIDTH - 1);
     uint32_t c = lerpColor(a, b, gradientPos);
 
-    // Apply fade multiplier to brightness
     uint8_t fadeBrightness = (uint8_t)(currentBrightness * mobilityFade);
     c = applyBrightness(c, fadeBrightness);
 
@@ -313,10 +283,9 @@ void renderMobility() {
   strip.show();
 }
 
-// PARTY: smooth rainbow gradient flowing across the grid
 void renderParty() {
   unsigned long now = millis();
-  float baseHue = fmodf((float)now / 2.0f, 360.0f); // animate over time
+  float baseHue = fmodf((float)now / 2.0f, 360.0f);
   float brightnessFactor = (float)currentBrightness / 255.0f;
 
   for (int i = 0; i < NUM_LEDS; i++) {
@@ -359,7 +328,7 @@ void mqtt_callback(char *topic, byte *payload, unsigned int len) {
     } else if (msg == "MODE_MOBILITY") {
       currentMode = MODE_MOBILITY;
       modeStartMillis = millis();
-      mobilityFade = 0.0; // Start from off for smooth fade in
+      mobilityFade = 0.0;
     } else if (msg == "MODE_PARTY") {
       currentMode = MODE_PARTY;
       modeStartMillis = millis();
@@ -367,7 +336,6 @@ void mqtt_callback(char *topic, byte *payload, unsigned int len) {
   }
 
   if (String(topic) == "esp32/gradient") {
-    // Format: "UPRIGHT:0" or "SLOUCH:2" or "UPRIGHT:0:INSTANT"
     int colonIndex = msg.indexOf(':');
     if (colonIndex > 0) {
       String posture = msg.substring(0, colonIndex);
@@ -401,7 +369,6 @@ void mqtt_callback(char *topic, byte *payload, unsigned int len) {
   }
 
   if (String(topic) == "esp32/brightness") {
-    // Format: "BRIGHT", "NORMAL", "DIMMED" or numeric 0-255
     if (msg == "BRIGHT") {
       currentBrightness = 255;
     } else if (msg == "NORMAL") {
@@ -445,7 +412,6 @@ void setup() {
   strip.begin();
   strip.show();
 
-  // Initialize with default upright gradient
   getGradientColors(currentUprightGradient, true, &toA, &toB);
   fromA = toA;
   fromB = toB;
@@ -462,7 +428,6 @@ void loop() {
 
   unsigned long now = millis();
 
-  // Auto-exit special modes after 10 seconds back to posture gradient
   if (currentMode != MODE_POSTURE && (now - modeStartMillis >= 10000UL)) {
     currentMode = MODE_POSTURE;
     uint32_t a, b;

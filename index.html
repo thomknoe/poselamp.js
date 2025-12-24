@@ -7,17 +7,14 @@
 
     <link rel="stylesheet" href="style.css">
 
-    <!-- p5.js + ml5.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.9.4/p5.min.js"></script>
     <script src="https://unpkg.com/ml5@1/dist/ml5.min.js"></script>
 
-    <!-- MQTT.js -->
     <script src="https://unpkg.com/mqtt/dist/mqtt.min.js"></script>
 </head>
 
 <body>
 
-    <!-- ========== STEP 1: CONNECT DEVICE ========== -->
     <div id="screen1" class="screen active-screen">
         <div class="screen-card">
             <h2>Step 1 — Connect Device</h2>
@@ -47,7 +44,6 @@
         </div>
     </div>
 
-    <!-- ========== STEP 2: CALIBRATION ========== -->
     <div id="screen2" class="screen">
         <div class="screen-card">
             <h2>Step 2 — Calibrate Posture</h2>
@@ -90,7 +86,6 @@
         </div>
     </div>
 
-    <!-- ========== STEP 3: MODES & COLORS ========== -->
     <div id="screen3" class="screen">
         <div class="screen-card">
             <h2>Step 3 — Configure Settings</h2>
@@ -197,7 +192,6 @@
         </div>
     </div>
 
-    <!-- ========== DASHBOARD ========== -->
     <div id="dashboard" class="screen">
         <div class="screen-card">
             <h2>Dashboard</h2>
@@ -208,12 +202,10 @@
 
             <div class="dash-layout">
 
-                <!-- Left Column: Video feed -->
                 <div class="dash-video-wrap">
                     <div id="dashboardVideoContainer" class="video-wrap small-video"></div>
                 </div>
 
-                <!-- Right Column: Control + Status -->
                 <div class="dash-side">
 
                     <div class="panel dashboard-panel">
@@ -235,7 +227,6 @@
                 </div>
             </div>
 
-            <!-- Trendline -->
             <div class="panel dashboard-panel trend-panel">
                 <h3>Posture Trendline</h3>
                 <p class="section-description" style="margin-bottom: 12px;">Real-time visualization of your posture
@@ -243,7 +234,6 @@
                 <canvas id="trendCanvas" width="900" height="140"></canvas>
             </div>
 
-            <!-- Session Stats -->
             <div class="session-stats">
                 <div class="stat-item">
                     <div class="stat-label">Session Duration</div>
@@ -268,7 +258,6 @@
         </div>
     </div>
 
-    <!-- Color Selection Modal -->
     <div id="colorModal" class="modal-overlay">
         <div class="modal">
             <div class="modal-header">
